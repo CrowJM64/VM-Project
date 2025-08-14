@@ -1,5 +1,7 @@
 #  = "USER INPUT"
 
+apt-get install -y -v qemu-system
+
 #VM Installation Location
 read -p 'Where would you like the VM Image to be stored (default /opt/images/): ' -e -i '/opt/images' imagepath
 printf "You have chosen $imagepath
