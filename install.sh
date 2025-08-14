@@ -13,6 +13,8 @@ read -p 'Where would you like the VM Image to be stored (default /opt/images/): 
 printf "You have chosen $imagepath
 "
 mkdir -p $imagepath
+mkdir -p $imagepath/ISO
+mkdir -p $imagepath/Images
 
 #Choose which ISO from the list.
 
@@ -23,23 +25,23 @@ do
     case $opt in
         "Ubuntu")
             echo -e "Downloading \e[1m\e[34m Ubuntu 24.04.3 ISO...\e[0m"
-            wget -nc -nv --show-progress --progress=bar -P $imagepath https://mirror.server.net/ubuntu-releases/24.04.3/ubuntu-24.04.3-desktop-amd64.iso
+            wget -nc -nv --show-progress --progress=bar -P $imagepath/ISO https://mirror.server.net/ubuntu-releases/24.04.3/ubuntu-24.04.3-desktop-amd64.iso
             oschosen="Ubuntu"
-            iso="$imagepath/ubuntu-24.04.3-desktop-amd64.iso"
+            iso="$imagepath/ISO/ubuntu-24.04.3-desktop-amd64.iso"
             break
             ;;
         "Fedora")
             echo -e "Downloading \e[1m\e[34m Fedora 42 ISO...\e[0m"
-            wget -nc -nv --show-progress --progress=bar -P $imagepath https://download.fedoraproject.org/pub/fedora/linux/releases/42/Workstation/x86_64/iso/Fedora-Workstation-Live-42-1.1.x86_64.iso
+            wget -nc -nv --show-progress --progress=bar -P $imagepath/ISO/ https://download.fedoraproject.org/pub/fedora/linux/releases/42/Workstation/x86_64/iso/Fedora-Workstation-Live-42-1.1.x86_64.iso
             oschosen="Fedora"
-            iso="$imagepath/Fedora-Workstation-Live-42-1.1.x86_64.iso"
+            iso="$imagepath/ISO/Fedora-Workstation-Live-42-1.1.x86_64.iso"
             break
             ;;
         "Rocky 10")
             echo -e "Downloading \e[1m\e[34m Rocky Linux 10 ISO...\e[0m"
-            wget -nc -nv --show-progress --progress=bar -P $imagepath https://download.rockylinux.org/pub/rocky/10/isos/x86_64/Rocky-10.0-x86_64-dvd1.iso
+            wget -nc -nv --show-progress --progress=bar -P $imagepath/ISO/ https://download.rockylinux.org/pub/rocky/10/isos/x86_64/Rocky-10.0-x86_64-dvd1.iso
             oschosen="Rocky 10"
-            iso=$imagepath/Rocky-10.0-x86_64-dvd1.iso
+            iso=$imagepath/ISO/Rocky-10.0-x86_64-dvd1.iso
             break
             ;;
         "Quit")
@@ -67,9 +69,9 @@ printf "Assigning the VM with a $hddsize storage allocation.
 "
 
 
-qemu-img create -f qcow2 $imagepath$vmname.img $hddsize
+qemu-img create -f qcow2 $imagepath/Images/$vmname.img $hddsize
 
-kvm -hda $imagepath$vmname.img \
+kvm -hda $imagepath/ISO/$vmname.img \
     -cdrom $iso \
     -m $ram \
     -net nic \
