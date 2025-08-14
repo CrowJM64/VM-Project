@@ -10,6 +10,29 @@ mkdir -p $imagepath
 
 #Choose which ISO from the list.
 
+PS3='Please choose the desired OS: '
+options=("Ubuntu" "Fedora" "Rocky 9" "Quit")
+select opt in "${options[@]}"
+do
+    case $opt in
+        "Ubuntu")
+            wget -nc -P /opt/images/ https://mirror.server.net/ubuntu-releases/24.04.3/ubuntu-24.04.3-desktop-amd64.iso
+            ;;
+        "Fedora")
+            echo "you chose choice 2"
+            ;;
+        "Rocky 9")
+            echo "you chose choice $REPLY which is $opt"
+            ;;
+        "Quit")
+            break
+            ;;
+        *) echo "invalid option $REPLY";;
+    esac
+done
+
+
+
 wget -nc -P /opt/images/ https://mirror.server.net/ubuntu-releases/24.04.3/ubuntu-24.04.3-desktop-amd64.iso 
 
 
