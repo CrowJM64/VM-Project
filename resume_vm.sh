@@ -9,7 +9,7 @@ echo -e "Installing QEMU System and KVM..."
 apt-get install -q -y qemu-system
 
 #VM Installation Location
-read -p 'Where are your VM images stored? (default /opt/images/): ' -e -i '/opt/images' imagepath
+read -p 'Where are your VM images stored? (default /opt/VM/Images/): ' -e -i '/opt/VM/Images' imagepath
 
 printf "Opening $imagepath
 "
@@ -17,7 +17,14 @@ cd $imagepath
 
 #Choose which image to boot.
 
-============================================
+
+ls -a | grep -e *.img
+
+break
+
+
+
+#============================================
 
 select image in $imagepath
 do
@@ -85,7 +92,7 @@ echo -e "Installing QEMU System and KVM..."
 apt-get install -q -y qemu-system
 
 #VM Installation Location
-read -p 'Where would you like the VM Image to be stored (default /opt/images/): ' -e -i '/opt/images' imagepath
+read -p 'Where would you like the VM Image to be stored (default /opt/VM/): ' -e -i '/opt/VM' imagepath
 printf "You have chosen $imagepath
 "
 mkdir -p $imagepath

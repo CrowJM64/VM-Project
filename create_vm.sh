@@ -9,12 +9,10 @@ echo -e "Installing QEMU System and KVM..."
 apt-get install -q -y qemu-system
 
 #VM Installation Location
-read -p 'Where would you like the VM Image to be stored (default /opt/images/): ' -e -i '/opt/images' imagepath
-printf "You have chosen $imagepath
+read -p 'Where would you like the VM Image to be stored (default /opt/VM/): ' -e -i '/opt/VM' imagepath
+printf "You have chosen $imagepath, creating directories /ISO and /Images
 "
-mkdir -p $imagepath
-mkdir -p $imagepath/ISO
-mkdir -p $imagepath/Images
+mkdir -p $imagepath $imagepath/ISO $imagepath/Images
 
 #Choose which ISO from the list.
 
@@ -68,10 +66,9 @@ read -p 'Enter the desired storage size assigned to the VM (Default 16G): ' -e -
 printf "Assigning the VM with a $hddsize storage allocation.
 "
 
-
 qemu-img create -f qcow2 $imagepath/Images/$vmname.img $hddsize
 
-kvm -hda $imagepath/ISO/$vmname.img \
+kvm -hda $imagepath/Images/$vmname.img \
     -cdrom $iso \
     -m $ram \
     -net nic \
