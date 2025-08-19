@@ -10,3 +10,18 @@ read -p 'Where are the VMs installed?  (default /opt/VM/Images): ' -e -i '/opt/V
 
 
 #Choose which VM from the list, or all.
+
+if [ ! -f $imagepath/*.img ]; then
+    echo "Image not found! Please create a VM first using create_vm.sh
+    "
+    exit 1
+else
+    echo "Available VM Images:"
+fi
+
+select image in $imagepath/*.img ; do printf "You have chosen $image\n"; $image; done
+
+echo -e "You have chosen to DELETE $image."
+rm -rf $imagepath/$image
+
+echo -e "$image has been deleted."
