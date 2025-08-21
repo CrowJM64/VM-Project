@@ -19,6 +19,7 @@ echo -e "Checking $imagepath
 #============================================
 #ls $imagepath/*.img
 #ls -a | grep -e *.img
+
 if [ ! -f $imagepath/*.img ]; then
     echo "Image not found! Please create a VM first using create_vm.sh
     "
@@ -27,9 +28,9 @@ else
     echo "Available VM Images:"
 fi
 
-select image in $imagepath/*.img ; do printf "You have chosen $image\n"; $image; done
+select image in $imagepath/*.img ; do printf "You have chosen $image"; $image; done
 
-chmod 744 $imagepath/Images/$image
+chmod 744 $imagepath/Images/$image.img
 
 #RAM Size
 read -p 'Enter the desired amount of RAM in MB (default 8192): ' -e -i '8192'  ram
