@@ -28,13 +28,13 @@ else
     echo "Available VM Images:"
 fi
 
-select image in $imagepath/*.img ; do printf "You have chosen $image"; $image; done
+chmod 700 $imagepath/*.img
 
-chmod 744 $imagepath/Images/$image.img
+select image in $imagepath/*.img; do printf "You have chosen $image"; $image; done
 
 #RAM Size
 read -p 'Enter the desired amount of RAM in MB (default 8192): ' -e -i '8192'  ram
 printf "Assigning the VM with $ram MB RAM
 "
 
-/opt/VM/Images# qemu-system-x86_64 -enable-kvm -m $ram -drive file=$image,format=qcow2,if=virtio -display sdl -cdrom $iso
+/opt/VM/Images# qemu-system-x86_64 -enable-kvm -m $ram -drive file=$imagepath/$image,format=qcow2,if=virtio -display sdl -cdrom $iso
