@@ -68,7 +68,7 @@ printf "Assigning the VM with a $hddsize storage allocation.
 
 qemu-img create -f qcow2 $imagepath/Images/$vmname.img $hddsize
 
-chmod 744 $imagepath/Images/$vmname.img
+chmod 700 $imagepath/Images/$vmname.img
 
 kvm -hda $imagepath/Images/$vmname.img \
     -cdrom $iso \

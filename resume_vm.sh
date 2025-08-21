@@ -17,8 +17,6 @@ echo -e "Checking $imagepath
 #============================================
 #CHOOSE IMAGE TO BOOT, ASK IF THEY WANT TO ATTACH ISO
 #============================================
-#ls $imagepath/*.img
-#ls -a | grep -e *.img
 
 if [ ! -f $imagepath/*.img ]; then
     echo "Image not found! Please create a VM first using create_vm.sh
@@ -28,13 +26,20 @@ else
     echo "Available VM Images:"
 fi
 
-chmod 700 $imagepath/*.img
+select image in "$imagepath"/*.img; do
+    # Check if the user made a valid selection
+    if [[ -z "$image" ]]; then
+        echo "Invalid selection. Please choose a number from the list."
+        continue
+    fi
+    break
+done
 
-select image in $imagepath/*.img; do printf "You have chosen $image"; $image; done
+printf "You have chosen: %s\n" "$image"
 
 #RAM Size
 read -p 'Enter the desired amount of RAM in MB (default 8192): ' -e -i '8192'  ram
 printf "Assigning the VM with $ram MB RAM
 "
 
-/opt/VM/Images# qemu-system-x86_64 -enable-kvm -m $ram -drive file=$imagepath/$image,format=qcow2,if=virtio -display sdl -cdrom $iso
+qemu-system-x86_64 -enable-kvm -m $ram -drive file=$image,format=qcow2,if=virtio -display sdl
