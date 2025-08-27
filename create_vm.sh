@@ -4,19 +4,19 @@ echo -e "\e[36m=====================================\e[0m"
 echo -e "\e[1m\e[34m        VM Creation Script        \e[0m"
 echo -e "\e[36m=====================================\e[0m"
 
-echo -e "Installing QEMU System and KVM..."
+echo -e "\e[1m\e[34mInstalling QEMU System and KVM...\e[0m"
 apt-get install -q -y qemu-system
 
 #VM Installation Location
 read -p 'Where would you like the VM Image to be stored (default /opt/VM/): ' -e -i '/opt/VM' imagepath
-printf "You have chosen $imagepath, creating directories /ISO and /Images
+echo -e "\e[1m\e[34mYou have chosen $imagepath, creating directories /ISO and /Images \e[0m
 "
 mkdir -p $imagepath $imagepath/ISO $imagepath/Images
 
 #Choose which ISO from the list.
 
 PS3='Please choose the desired OS: '
-options=("Ubuntu" "Fedora" "Rocky 10" "Quit")
+options=("Ubuntu" "Fedora" "Rocky 10" "Windows Server 2022" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
@@ -41,6 +41,13 @@ do
             iso=$imagepath/ISO/Rocky-10.0-x86_64-dvd1.iso
             break
             ;;
+        "Windows Server 2022")
+            echo -e "Downloading\e[1m\e[34m Windows Server 2022 ISO\e[0m if needed..."
+            wget -nc -nv --show-progress --progress=bar -P $imagepath/ISO/ https://software-static.download.prss.microsoft.com/sg/download/888969d5-f34g-4e03-ac9d-1f9786c66749/SERVER_EVAL_x64FRE_en-us.iso
+            oschosen="Windows Server 2022"
+            iso=$imagepath/ISO/SERVER_EVAL_x64FRE_en-us.iso
+            break
+            ;;
         "Quit")
             echo -e "Exiting VM creation script."
             exit 1
@@ -50,20 +57,25 @@ do
 done
 
 
-
 #Name the VM
 read -p 'Enter the desired name of the VM: ' -e -i "$oschosen" vmname
 printf "Creating the image: $vmname
+"
+echo -e "\e[1m\e[34mCreating the image: $vmname \e[0m
 "
 
 #RAM Size
 read -p 'Enter the desired amount of RAM in MB (default 8192): ' -e -i '8192'  ram
 printf "Assigning the VM with $ram MB RAM
 "
+echo -e "\e[1m\e[34mAssigning the VM with $ram MB RAM \e[0m
+"
 
 #HDD Size
 read -p 'Enter the desired storage size assigned to the VM (Default 16G): ' -e -i '16G'  hddsize
 printf "Assigning the VM with a $hddsize storage allocation.
+"
+echo -e "\e[1m\e[34mAssigning the VM with a $hddsize storage allocation. \e[0m
 "
 
 qemu-img create -f qcow2 $imagepath/Images/$vmname.img $hddsize
@@ -77,10 +89,9 @@ kvm -hda $imagepath/Images/$vmname.img \
     -net nic \
     -net user \
     -daemonize \
-#    -audiodev pa,id=audio0 -machine pcspk-audiodev=audio0
-#    -soundhw all
 
-printf "Daemonized VM Created. Closing the QEMU image stops the VM.
+echo -e "\e[1m\e[34mDaemonized VM Created. Closing the QEMU image stops the VM. \e[0m
+"
 
-To re-open a VM, use the resume_vm script.
+echo -e "\e[1m\e[34mTo re-open a VM, use the resume_vm script. \e[0m
 "
