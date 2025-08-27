@@ -19,7 +19,14 @@ else
     echo "Available VM Images:"
 fi
 
-select image in $imagepath/*.img ; do printf "You have chosen $image\n"; $image; done
+select image in "$imagepath"/*.img; do
+    # Check if the user made a valid selection
+    if [[ -z "$image" ]]; then
+        echo "Invalid selection. Please choose a number from the list."
+        continue
+    fi
+    break
+done
 
 echo -e "You have chosen to DELETE $image."
 rm -rf $imagepath/$image

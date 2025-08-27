@@ -71,9 +71,16 @@ qemu-img create -f qcow2 $imagepath/Images/$vmname.img $hddsize
 chmod 700 $imagepath/Images/$vmname.img
 
 kvm -hda $imagepath/Images/$vmname.img \
+    -display sdl \
     -cdrom $iso \
     -m $ram \
     -net nic \
     -net user \
+    -daemonize \
 #    -audiodev pa,id=audio0 -machine pcspk-audiodev=audio0
 #    -soundhw all
+
+printf "Daemonized VM Created. Closing the QEMU image stops the VM.
+
+To re-open a VM, use the resume_vm script.
+"
