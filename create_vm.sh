@@ -72,17 +72,17 @@ echo -e "\e[1m\e[34mAssigning the VM with $ram MB RAM \e[0m
 "
 
 #HDD Size
-read -p 'Enter the desired storage size assigned to the VM (Default 16G): ' -e -i '16G'  hddsize
+read -p 'Enter the desired storage size assigned to the VM (Default 20G): ' -e -i '20G'  hddsize
 printf "Assigning the VM with a $hddsize storage allocation.
 "
 echo -e "\e[1m\e[34mAssigning the VM with a $hddsize storage allocation. \e[0m
 "
 
-qemu-img create -f qcow2 $imagepath/Images/$vmname.img $hddsize
+qemu-img create -f qcow2 "$imagepath/Images/$vmname.img" $hddsize
 
-chmod 700 $imagepath/Images/$vmname.img
+chmod 700 "$imagepath/Images/$vmname.img"
 
-kvm -hda $imagepath/Images/$vmname.img \
+kvm -hda "$imagepath/Images/$vmname.img" \
     -display sdl \
     -cdrom $iso \
     -m $ram \

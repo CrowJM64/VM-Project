@@ -42,4 +42,4 @@ read -p 'Enter the desired amount of RAM in MB (default 8192): ' -e -i '8192'  r
 printf "Assigning the VM with $ram MB RAM
 "
 
-qemu-system-x86_64 -enable-kvm -m $ram -drive $image,format=qcow2,if=virtio -display sdl -daemonize
+qemu-system-x86_64 -enable-kvm -m $ram -drive file="$image",format=qcow2,if=virtio -display sdl -daemonize
