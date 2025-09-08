@@ -1,0 +1,1 @@
+qemu-img create -f qcow2 -b centos-cleaninstall.img -F qcow2 snapshot.img
