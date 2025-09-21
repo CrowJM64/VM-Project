@@ -1,11 +1,12 @@
 #!/bin/bash
-
+echo off
 echo -e "\e[36m=====================================\e[0m"
-echo -e "\e[1m\e[34m        Start VM Script        \e[0m"
+echo -e "\e[1m\e[34m        VM Resume Script        \e[0m"
 echo -e "\e[36m=====================================\e[0m"
 
-echo -e "Installing QEMU System and KVM..."
-apt-get install -q -y qemu-system
+echo -e "Checking QEMU System and Bridge Utils are installed..."
+apt-get install -qq -y qemu-system
+apt-get install -qq -y bridge-utils
 
 #Set VM Installation Location
 read -p 'Where are your VM images stored? (default /opt/VM/Images/): ' -e -i '/opt/VM/Images' imagepath

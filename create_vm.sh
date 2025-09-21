@@ -4,8 +4,9 @@ echo -e "\e[36m=====================================\e[0m"
 echo -e "\e[1m\e[34m        VM Creation Script        \e[0m"
 echo -e "\e[36m=====================================\e[0m"
 
-echo -e "\e[1m\e[34mInstalling QEMU System and KVM...\e[0m"
-apt-get install -q -y qemu-system
+echo -e "Checking QEMU System and Bridge Utils are installed..."
+apt-get install -qq -y qemu-system
+apt-get install -qq -y bridge-utils
 
 #VM Installation Location
 read -p 'Where would you like the VM Image to be stored (default /opt/VM/): ' -e -i '/opt/VM' imagepath

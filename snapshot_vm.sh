@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo -e "\e[36m=====================================\e[0m"
-echo -e "\e[1m\e[34m        Start VM Script        \e[0m"
+echo -e "\e[1m\e[34m        VM Snapshot Script        \e[0m"
 echo -e "\e[36m=====================================\e[0m"
 
 
@@ -33,13 +33,6 @@ printf "You have chosen: %s\n" "$image2snap"
 read -p 'What would you like to name the Snapshot? (default $image2snap): ' -e -i '$image2snap.img' snapname
 
 qemu-img create -f qcow2 -b $image2snap -F qcow2 $snapname
-
-
-
-WOULD YOU LIKE TO RUN THE SNAPSHOT NOW???
-
-
-
 
 #RAM Size
 read -p 'Enter the desired amount of RAM in MB (default 8192): ' -e -i '8192'  ram
