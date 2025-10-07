@@ -30,15 +30,13 @@ done
 
 printf "You have chosen: %s\n" "$image2snap"
 
-read -p 'What would you like to name the Snapshot? (default $image2snap): ' -e -i '$image2snap.img' snapname
+read -p 'What would you like to name the Snapshot? (default SnapShot): ' -e -i 'SnapShot' snapname
 
-qemu-img create -f qcow2 -b $image2snap -F qcow2 $snapname
+qemu-img create -f qcow2 -b $image2snap -F qcow2 $snapname.img
 
 #RAM Size
 read -p 'Enter the desired amount of RAM in MB (default 8192): ' -e -i '8192'  ram
 printf "Assigning the VM with $ram MB RAM
 "
 
-qemu-system-x86_64 -enable-kvm -m $ram -drive file="$image",format=qcow2,if=virtio -display sdl -daemonize
-
-
+qemu-system-x86_64 -enable-kvm -m $ram -drive file="$snapname",format=qcow2,if=virtio -display sdl -daemonize

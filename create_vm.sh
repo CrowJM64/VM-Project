@@ -74,36 +74,34 @@ done
 
 #Name the VM
 read -p 'Enter the desired name of the VM: ' -e -i "$oschosen" vmname
-printf "Creating the image: $vmname
-"
 echo -e "\e[1m\e[34mCreating the image: $vmname \e[0m
 "
 
 #RAM Size
 read -p 'Enter the desired amount of RAM in MB (default 8192): ' -e -i '8192'  ram
-printf "Assigning the VM with $ram MB RAM
-"
 echo -e "\e[1m\e[34mAssigning the VM with $ram MB RAM \e[0m
 "
 
 #HDD Size
 read -p 'Enter the desired storage size assigned to the VM (Default 20G): ' -e -i '20G'  hddsize
-printf "Assigning the VM with a $hddsize storage allocation.
+echo -e "\e[1m\e[34mCreating the VM with a $hddsize storage allocation. \e[0m
 "
-echo -e "\e[1m\e[34mAssigning the VM with a $hddsize storage allocation. \e[0m
+
+echo -e "Which mode would you like to run the VM In? \e[0m
 "
+select dis in "SDL - Simple Window" "GTK - Window With Options" "Headless"; do
+  case $yn in 
+    SDL - Simple Window ) dis="sdl";;
+    GTK - Window With Options ) dis="gtk";;
+    Headless ) dis="none";;
+  esac
+done
 
 qemu-img create -f qcow2 "$imagepath/Images/$vmname.img" $hddsize
 
 chmod 700 "$imagepath/Images/$vmname.img"
 
-kvm -hda "$imagepath/Images/$vmname.img" \
-    -display sdl \
-    -cdrom $iso \
-    -m $ram \
-    -net nic \
-    -net user \
-    -daemonize \
+qemu-system-x86_64 -m $ram -hda "$imagepath/Images/$vmname.img" -cdrom $iso -display $dis -netdev user,id=mynet0,hostfwd=tcp::8080-:80:22 -daemonize
 
 echo -e "\e[1m\e[34mDaemonized VM Created. Closing the QEMU image stops the VM. \e[0m
 "
