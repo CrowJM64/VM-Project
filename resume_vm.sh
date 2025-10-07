@@ -15,7 +15,7 @@ echo -e "Checking $imagepath
 
 #### Check if there are IMG files in the designated path.
 if [ ! -f $imagepath/*.img ]; then
-    echo "Image not found! Please create a VM first using create_vm.sh
+    echo -e "\033[0;31mImage not found! Please create a VM first using create_vm.sh!\033[0m
     "
     exit 1
 else
@@ -26,13 +26,13 @@ fi
 select image in "$imagepath"/*.img; do
     # Check if the user made a valid selection
     if [[ -z "$image" ]]; then
-        echo "Invalid selection. Please choose an option from the list."
+        echo -e "\033[0;31mInvalid selection. Please choose an option from the list.\033[0m"
         continue
     fi
     break
 done
 
-echo -e "You have chosen $image."
+echo -e "\e[1m\e[34mYou have chosen $image. \e[0m"
 
 #### ISO Choices
 echo -e "Do you want to attach an ISO?"
@@ -96,9 +96,9 @@ done
 
 
 
-#### RAM Size Choices
+#### RAM Size
 read -p 'Enter the desired amount of RAM in MB (default 8192): ' -e -i '8192'  ram
-printf "Assigning the VM with $ram MB RAM
+echo -e "\e[1m\e[34mAssigning the VM with $ram MB RAM \e[0m
 "
 
 

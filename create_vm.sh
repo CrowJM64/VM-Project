@@ -48,7 +48,7 @@ do
             echo -e "Downloading\e[1m\e[34m Fedora 42 ISO\e[0m if needed..."
             wget -nc -nv --show-progress --progress=bar -P $imagepath/iso/ https://download.fedoraproject.org/pub/fedora/linux/releases/42/Workstation/x86_64/iso/Fedora-Workstation-Live-42-1.1.x86_64.iso
             oschosen="Fedora"
-            iso="$imagepath/iso/fedora-workstation-live-42-1.1.x86_64.iso"
+            iso="$imagepath/iso/Fedora-Workstation-Live-42-1.1.x86_64.iso"
             break
             ;;
         "ArchLinux")
