@@ -12,7 +12,7 @@ apt-get install -qq -y bridge-utils
 read -p 'Where would you like the VM Image to be stored (default /opt/vm): ' -e -i '/opt/vm' imagepath
 echo -e "\e[1m\e[34mYou have chosen $imagepath, creating directories /iso and /images \e[0m
 "
-mkdir -p $imagepath $imagepath/ISO $imagepath/Images
+mkdir -p $imagepath $imagepath/iso $imagepath/images
 
 #Choose which ISO from the list.
 
@@ -38,14 +38,14 @@ do
         "ArchLinux")
             echo -e "Downloading\e[1m\e[34m Arch Linux 2025.10.01 ISO\e[0m if needed..."
             wget -nc -nv --show-progress --progress=bar -P $imagepath/iso/ https://mirror.ipb.de/archlinux/iso/2025.10.01/archlinux-2025.10.01-x86_64.iso
-            oschosen="Fedora"
-            iso="$imagepath/iso/arch-linux-latest.iso"
+            oschosen="ArchLinux"
+            iso="$imagepath/iso/archlinux-2025.10.01-x86_64.iso"
             break
             ;;
         "Rocky10")
             echo -e "Downloading\e[1m\e[34m Rocky Linux 10 ISO\e[0m if needed..."
             wget -nc -nv --show-progress --progress=bar -P $imagepath/iso/ https://download.rockylinux.org/pub/rocky/10/isos/x86_64/Rocky-10.0-x86_64-dvd1.iso
-            oschosen="Rocky 10"
+            oschosen="Rocky_10"
             iso=$imagepath/iso/Rocky-10.0-x86_64-dvd1.iso
             break
             ;;
@@ -74,7 +74,9 @@ do
             echo -e "Exiting VM creation script."
             exit 1
             ;;
-        *) echo "invalid option $REPLY";;
+        *)
+            echo -e "\033[0;31m Invalid Option $REPLY\033[0m"
+            ;;
     esac
 done
 
@@ -94,21 +96,36 @@ read -p 'Enter the desired storage size assigned to the VM (Default 25G): ' -e -
 echo -e "\e[1m\e[34mCreating the VM with a $hddsize storage allocation. \e[0m
 "
 
-echo -e "Which mode would you like to run the VM In? \e[0m
+echo -e "Which display mode would you like to run the VM In? \e[0m
 "
-select dis in "SDL - Simple Window" "GTK - Window With Options" "Headless"; do
-  case $yn in 
-    SDL - Simple Window ) dis="sdl";;
-    GTK - Window With Options ) dis="gtk";;
-    Headless ) dis="none";;
+
+select dis in "SDL - Simple Window" "GTK - Window With Options" "Headless";
+do
+  case $dis in 
+    "SDL - Simple Window" )
+        dis="sdl"
+        break
+        ;;
+    "GTK - Window With Options" )
+        dis="gtk"
+        break
+        ;;
+    "Headless" )
+        dis="none"
+        break
+        ;;
+    *)
+        echo -e "\033[0;31m Invalid Option $REPLY\033[0m"
+        echo "Please choose 1 for a Simple VM Window, 2 for a VM Window with options, or 3 to be a headless VM."
+        ;;
   esac
 done
 
-qemu-img create -f qcow2 "$imagepath/Images/$vmname.img" $hddsize
+qemu-img create -f qcow2 "$imagepath/images/$vmname.img" $hddsize
 
-chmod 700 "$imagepath/Images/$vmname.img"
+chmod 700 "$imagepath/images/$vmname.img"
 
-qemu-system-x86_64 -m $ram -hda "$imagepath/Images/$vmname.img" -cdrom $iso -display $dis -netdev user,id=mynet0,hostfwd=tcp::8080-:80:22 -daemonize
+qemu-system-x86_64 -m $ram -hda "$imagepath/images/$vmname.img" -cdrom $iso -display $dis -net user -daemonize
 
 echo -e "\e[1m\e[34mDaemonized VM Created. Closing the QEMU image stops the VM. \e[0m
 "
