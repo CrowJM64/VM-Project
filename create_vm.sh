@@ -9,58 +9,65 @@ apt-get install -qq -y qemu-system
 apt-get install -qq -y bridge-utils
 
 #VM Installation Location
-read -p 'Where would you like the VM Image to be stored (default /opt/VM/): ' -e -i '/opt/VM' imagepath
-echo -e "\e[1m\e[34mYou have chosen $imagepath, creating directories /ISO and /Images \e[0m
+read -p 'Where would you like the VM Image to be stored (default /opt/vm): ' -e -i '/opt/vm' imagepath
+echo -e "\e[1m\e[34mYou have chosen $imagepath, creating directories /iso and /images \e[0m
 "
 mkdir -p $imagepath $imagepath/ISO $imagepath/Images
 
 #Choose which ISO from the list.
 
 PS3='Please choose the desired OS: '
-options=("Ubuntu" "Fedora" "Rocky10" "WindowsServer2022" "Bazzite" "LinuxMint" "Quit")
+options=("Ubuntu" "Fedora" "ArchLinux" "Rocky10" "WindowsServer2022" "Bazzite" "LinuxMint" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
         "Ubuntu")
-            echo -e "Downloading\e[1m\e[34m Ubuntu 24.04.3 ISO\e[0m if needed..."
-            wget -nc -nv --show-progress --progress=bar -P $imagepath/ISO https://mirror.server.net/ubuntu-releases/24.04.3/ubuntu-24.04.3-desktop-amd64.iso
+            echo -e "Downloading\e[1m\e[34m Ubuntu 25.04 ISO\e[0m if needed..."
+            wget -nc -nv --show-progress --progress=bar -P $imagepath/iso https://mirror.server.net/ubuntu-releases/25.04/ubuntu-25.04-desktop-amd64.iso
             oschosen="Ubuntu"
-            iso="$imagepath/ISO/ubuntu-24.04.3-desktop-amd64.iso"
+            iso="$imagepath/iso/ubuntu-25.04-desktop-amd64.iso"
             break
             ;;
         "Fedora")
             echo -e "Downloading\e[1m\e[34m Fedora 42 ISO\e[0m if needed..."
-            wget -nc -nv --show-progress --progress=bar -P $imagepath/ISO/ https://download.fedoraproject.org/pub/fedora/linux/releases/42/Workstation/x86_64/iso/Fedora-Workstation-Live-42-1.1.x86_64.iso
+            wget -nc -nv --show-progress --progress=bar -P $imagepath/iso/ https://download.fedoraproject.org/pub/fedora/linux/releases/42/Workstation/x86_64/iso/Fedora-Workstation-Live-42-1.1.x86_64.iso
             oschosen="Fedora"
-            iso="$imagepath/ISO/Fedora-Workstation-Live-42-1.1.x86_64.iso"
+            iso="$imagepath/iso/fedora-workstation-live-42-1.1.x86_64.iso"
+            break
+            ;;
+        "ArchLinux")
+            echo -e "Downloading\e[1m\e[34m Arch Linux ISO\e[0m if needed..."
+            wget -nc -nv --show-progress --progress=bar -P $imagepath/iso/ https://mirror.ipb.de/archlinux/iso/latest/archlinux-20*.*.*-x86_64.iso
+            oschosen="Fedora"
+            iso="$imagepath/iso/arch-linux-latest.iso"
             break
             ;;
         "Rocky10")
             echo -e "Downloading\e[1m\e[34m Rocky Linux 10 ISO\e[0m if needed..."
-            wget -nc -nv --show-progress --progress=bar -P $imagepath/ISO/ https://download.rockylinux.org/pub/rocky/10/isos/x86_64/Rocky-10.0-x86_64-dvd1.iso
+            wget -nc -nv --show-progress --progress=bar -P $imagepath/iso/ https://download.rockylinux.org/pub/rocky/10/isos/x86_64/Rocky-10.0-x86_64-dvd1.iso
             oschosen="Rocky 10"
-            iso=$imagepath/ISO/Rocky-10.0-x86_64-dvd1.iso
+            iso=$imagepath/iso/Rocky-10.0-x86_64-dvd1.iso
             break
             ;;
         "WindowsServer2022")
             echo -e "Downloading\e[1m\e[34m Windows Server 2022 ISO\e[0m if needed..."
-            wget -nc -nv --show-progress --progress=bar -P $imagepath/ISO/ https://software-static.download.prss.microsoft.com/sg/download/888969d5-f34g-4e03-ac9d-1f9786c66749/SERVER_EVAL_x64FRE_en-us.iso
+            wget -nc -nv --show-progress --progress=bar -P $imagepath/iso/ https://software-static.download.prss.microsoft.com/sg/download/888969d5-f34g-4e03-ac9d-1f9786c66749/SERVER_EVAL_x64FRE_en-us.iso
             oschosen="Windows_Server_2022"
-            iso=$imagepath/ISO/SERVER_EVAL_x64FRE_en-us.iso
+            iso=$imagepath/iso/SERVER_EVAL_x64FRE_en-us.iso
             break
             ;;
         "Bazzite")
             echo -e "Downloading\e[1m\e[34m Bazzite ISO\e[0m if needed..."
-            wget -nc -nv --show-progress --progress=bar -P $imagepath/ISO/ https://download.bazzite.gg/bazzite-deck-nvidia-stable-amd64.iso
+            wget -nc -nv --show-progress --progress=bar -P $imagepath/iso/ https://download.bazzite.gg/bazzite-deck-nvidia-stable-amd64.iso
             oschosen="Bazzite"
-            iso=$imagepath/ISO/bazzite-deck-nvidia-stable-amd64.iso
+            iso=$imagepath/iso/bazzite-deck-nvidia-stable-amd64.iso
             break
             ;;
         "LinuxMint")
             echo -e "Downloading\e[1m\e[34m Linux Mint ISO\e[0m if needed..."
-            wget -nc -nv --show-progress --progress=bar -P $imagepath/ISO/ https://pub.linuxmint.io/stable/22.1/linuxmint-22.1-cinnamon-64bit.iso
+            wget -nc -nv --show-progress --progress=bar -P $imagepath/iso/ https://pub.linuxmint.io/stable/22.1/linuxmint-22.1-cinnamon-64bit.iso
             oschosen="LinuxMint"
-            iso=$imagepath/ISO/linuxmint-22.1-cinnamon-64bit.iso
+            iso=$imagepath/iso/linuxmint-22.1-cinnamon-64bit.iso
             break
             ;;
         "Quit")
@@ -83,7 +90,7 @@ echo -e "\e[1m\e[34mAssigning the VM with $ram MB RAM \e[0m
 "
 
 #HDD Size
-read -p 'Enter the desired storage size assigned to the VM (Default 20G): ' -e -i '20G'  hddsize
+read -p 'Enter the desired storage size assigned to the VM (Default 25G): ' -e -i '25G'  hddsize
 echo -e "\e[1m\e[34mCreating the VM with a $hddsize storage allocation. \e[0m
 "
 
