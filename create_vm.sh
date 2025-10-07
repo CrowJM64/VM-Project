@@ -113,8 +113,7 @@ echo -e "\e[1m\e[34mCreating the VM with a $hddsize storage allocation. \e[0m
 "
 
 #### Display Choices
-echo -e "Which display mode would you like to run the VM In? \e[0m
-"
+PS3='Choose which Display Mode you would like to use:'
 select dis in "SDL - Simple Window (Reccomended)" "GTK - Window With Options" "Headless";
 do
   case $dis in 
@@ -144,7 +143,7 @@ qemu-img create -f qcow2 "$imagepath/images/$vmname.img" $hddsize
 chmod 700 "$imagepath/images/$vmname.img"
 
 #### Actual VM Run command
-qemu-system-x86_64 -enable-kvm -cpu host -m $ram -hda "$imagepath/images/$vmname.img" -cdrom $iso -display $dis -net user -daemonize
+qemu-system-x86_64 -enable-kvm -cpu host -m $ram -hda "$imagepath/images/$vmname.img" -cdrom $iso -display $dis -daemonize
 
 #### Closing Statement
 echo -e "\e[1m\e[34mDaemonized VM Created. Closing the QEMU image stops the VM. \e[0m
