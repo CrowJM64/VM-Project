@@ -36,8 +36,8 @@ do
             break
             ;;
         "ArchLinux")
-            echo -e "Downloading\e[1m\e[34m Arch Linux ISO\e[0m if needed..."
-            wget -nc -nv --show-progress --progress=bar -P $imagepath/iso/ https://mirror.ipb.de/archlinux/iso/latest/archlinux-20*.*.*-x86_64.iso
+            echo -e "Downloading\e[1m\e[34m Arch Linux 2025.10.01 ISO\e[0m if needed..."
+            wget -nc -nv --show-progress --progress=bar -P $imagepath/iso/ https://mirror.ipb.de/archlinux/iso/2025.10.01/archlinux-2025.10.01-x86_64.iso
             oschosen="Fedora"
             iso="$imagepath/iso/arch-linux-latest.iso"
             break
