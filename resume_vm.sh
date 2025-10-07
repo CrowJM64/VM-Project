@@ -103,7 +103,7 @@ echo -e "\e[1m\e[34mAssigning the VM with $ram MB RAM \e[0m
 
 
 if [[ $isoyn == "yes" ]]; then
-    qemu-system-x86_64 -enable-kvm -cpu host -m $ram -drive file="$image",format=qcow2,if=virtio -display $dis -net user -daemonize -cdrom $iso
+    qemu-system-x86_64 -enable-kvm -cpu host -m $ram -drive file="$image",format=qcow2,if=virtio -display $dis -daemonize -cdrom $iso
 else
-    qemu-system-x86_64 -enable-kvm -cpu host -m $ram -drive file="$image",format=qcow2,if=virtio -display $dis -net user -daemonize
+    qemu-system-x86_64 -enable-kvm -cpu host -m $ram -drive file="$image",format=qcow2,if=virtio -display $dis -daemonize
 fi
