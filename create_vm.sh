@@ -1,20 +1,36 @@
 #!/bin/bash
 
-echo -e "\e[36m=====================================\e[0m"
+echo -e "\e[1m\e[34m=====================================\e[0m"
 echo -e "\e[1m\e[34m        VM Creation Script        \e[0m"
-echo -e "\e[36m=====================================\e[0m"
+echo -e "\e[1m\e[34m=====================================\e[0m"
 
-echo -e "Checking QEMU System and Bridge Utils are installed..."
-apt-get install -qq -y qemu-system
-apt-get install -qq -y bridge-utils
+echo -e "This script will install qemu-system (For VM Emulation) and bridge-utils (For NET Bridging) if not already installed. Do you consent?"
+select consent in "Yes" "No";
+do
+    case $consent in 
+        "Yes" )
+            echo -e "\e[1m\e[34mChecking QEMU System and Bridge Utils are installed... \e[0m"
+            apt-get install -qq -y qemu-system
+            apt-get install -qq -y bridge-utils
+            break
+            ;;
+        "No" )
+            echo -e "\033[0;31mExiting VM Creation Script.\033[0m"
+            exit 1
+            ;;
+        *)
+            echo -e "\033[0;31mInvalid Option $REPLY\033[0m"
+            ;;
+    esac
+done
 
-#VM Installation Location
+#### VM Installation Location
 read -p 'Where would you like the VM Image to be stored (default /opt/vm): ' -e -i '/opt/vm' imagepath
 echo -e "\e[1m\e[34mYou have chosen $imagepath, creating directories /iso and /images \e[0m
 "
 mkdir -p $imagepath $imagepath/iso $imagepath/images
 
-#Choose which ISO from the list.
+#### Choose which ISO from the list.
 
 PS3='Please choose the desired OS: '
 options=("Ubuntu" "Fedora" "ArchLinux" "Rocky10" "WindowsServer2022" "Bazzite" "LinuxMint" "Quit")
@@ -81,28 +97,28 @@ do
 done
 
 
-#Name the VM
+#### Name the VM
 read -p 'Enter the desired name of the VM: ' -e -i "$oschosen" vmname
 echo -e "\e[1m\e[34mCreating the image: $vmname \e[0m
 "
 
-#RAM Size
+#### RAM Size
 read -p 'Enter the desired amount of RAM in MB (default 8192): ' -e -i '8192'  ram
 echo -e "\e[1m\e[34mAssigning the VM with $ram MB RAM \e[0m
 "
 
-#HDD Size
+#### HDD Size
 read -p 'Enter the desired storage size assigned to the VM (Default 25G): ' -e -i '25G'  hddsize
 echo -e "\e[1m\e[34mCreating the VM with a $hddsize storage allocation. \e[0m
 "
 
+#### Display Choices
 echo -e "Which display mode would you like to run the VM In? \e[0m
 "
-
-select dis in "SDL - Simple Window" "GTK - Window With Options" "Headless";
+select dis in "SDL - Simple Window (Reccomended)" "GTK - Window With Options" "Headless";
 do
   case $dis in 
-    "SDL - Simple Window" )
+    "SDL - Simple Window (Reccomended)" )
         dis="sdl"
         break
         ;;
@@ -121,14 +137,17 @@ do
   esac
 done
 
+#### Creating Image
 qemu-img create -f qcow2 "$imagepath/images/$vmname.img" $hddsize
 
+#### Set permissions RWX to Owner, none to others.
 chmod 700 "$imagepath/images/$vmname.img"
 
+#### Actual VM Run command
 qemu-system-x86_64 -m $ram -hda "$imagepath/images/$vmname.img" -cdrom $iso -display $dis -net user -daemonize
 
+#### Closing Statement
 echo -e "\e[1m\e[34mDaemonized VM Created. Closing the QEMU image stops the VM. \e[0m
 "
-
 echo -e "\e[1m\e[34mTo re-open a VM, use the resume_vm script. \e[0m
 "

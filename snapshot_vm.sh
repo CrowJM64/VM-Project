@@ -6,7 +6,7 @@ echo -e "\e[36m=====================================\e[0m"
 
 
 #Set VM  Location
-read -p 'Where are your VM images stored? (default /opt/VM/Images/): ' -e -i '/opt/VM/Images' imagepath
+read -p 'Where are your VM images stored? (default /opt/vm/images/): ' -e -i '/opt/VM/Images' imagepath
 echo -e "Checking $imagepath
 "
 
