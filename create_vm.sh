@@ -144,7 +144,7 @@ qemu-img create -f qcow2 "$imagepath/images/$vmname.img" $hddsize
 chmod 700 "$imagepath/images/$vmname.img"
 
 #### Actual VM Run command
-qemu-system-x86_64 -m $ram -hda "$imagepath/images/$vmname.img" -cdrom $iso -display $dis -net user -daemonize
+qemu-system-x86_64 -enable-kvm -cpu host -m $ram -hda "$imagepath/images/$vmname.img" -cdrom $iso -display $dis -net user -daemonize
 
 #### Closing Statement
 echo -e "\e[1m\e[34mDaemonized VM Created. Closing the QEMU image stops the VM. \e[0m
