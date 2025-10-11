@@ -4,9 +4,8 @@ echo -e "\e[36m=====================================\e[0m"
 echo -e "\e[1m\e[34m        VM Resumption Script        \e[0m"
 echo -e "\e[36m=====================================\e[0m"
 
-echo -e "Checking QEMU System and Bridge Utils are installed..."
+echo -e "\e[1m\e[34mChecking QEMU System is installed... \e[0m"
 apt-get install -qq -y qemu-system
-apt-get install -qq -y bridge-utils
 
 #### Choose VM Image Location
 read -p 'Where are your VM images stored? (default /opt/vm/images/): ' -e -i '/opt/vm/images' imagepath
@@ -94,16 +93,18 @@ do
   esac
 done
 
-
-
 #### RAM Size
 read -p 'Enter the desired amount of RAM in MB (default 8192): ' -e -i '8192'  ram
 echo -e "\e[1m\e[34mAssigning the VM with $ram MB RAM \e[0m
 "
 
+#### Assign Ports to forward to VM from LOCALHOST
+read -p 'Assign the ports on Localhost to forward to the VM: 
+e.g. hostfwd=tcp::2200-:22,hostfwd=tcp::8888-:8080
+' -e -i "hostfwd=tcp::2200-:22" hostfwd
 
 if [[ $isoyn == "yes" ]]; then
-    qemu-system-x86_64 -enable-kvm -cpu host -m $ram -drive file="$image",format=qcow2,if=virtio -display $dis -daemonize -cdrom $iso
+    qemu-system-x86_64 -enable-kvm -cpu host -m $ram -drive file="$image",format=qcow2,if=virtio -display $dis -daemonize -cdrom $iso -netdev user,id=net0,$hostfwd -device virtio-net-pci,netdev=net0
 else
-    qemu-system-x86_64 -enable-kvm -cpu host -m $ram -drive file="$image",format=qcow2,if=virtio -display $dis -daemonize
+    qemu-system-x86_64 -enable-kvm -cpu host -m $ram -drive file="$image",format=qcow2,if=virtio -display $dis -daemonize -netdev user,id=net0,$hostfwd -device virtio-net-pci,netdev=net0
 fi
