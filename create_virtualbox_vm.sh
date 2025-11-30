@@ -5,7 +5,9 @@ echo -e "\e[1m\e[34m=====================================\e[0m"
 
 ############### Default Variables
 vb_path="/opt/vm/virtualbox/"
-
+default_country="GB"
+default_timezone="Europe/London"
+default_locale="en_GB"
 ###############
 
 
@@ -13,27 +15,37 @@ vb_path="/opt/vm/virtualbox/"
 mkdir -p $vb_path/iso
 chmod -R 700 /opt/vm/
 
-PS3='Please choose the desired OS: '
-options=("Ubuntu" "Fedora" "ArchLinux" "Rocky10" "WindowsServer2022" "Bazzite" "LinuxMint" "Quit")
+PS3='Please choose the desired OS: (UI=Unattended Install Compatible)
+'
+options=("Ubuntu(UI)" "Fedora(UI)" "Rocky10(UI)" "ArchLinux" "WindowsServer2022" "Bazzite" "LinuxMint" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
-        "Ubuntu")
-            echo -e "Downloading\e[1m\e[34m Ubuntu 25.04 ISO\e[0m if needed...
+        "Ubuntu(UI)")
+            echo -e "Downloading\e[1m\e[34m Ubuntu Server 25.04 ISO\e[0m if needed...
             "
-            wget -nc -nv --show-progress --progress=bar -P $vb_path/iso https://mirror.server.net/ubuntu-releases/25.04/ubuntu-25.04-desktop-amd64.iso
+            wget -nc -nv --show-progress --progress=bar -P $vb_path/iso https://mirror.server.net/ubuntu-releases/25.04/ubuntu-25.04-live-server-amd64.iso
             oschosen="Ubuntu"
             os_type="Ubuntu_64"
-            iso="$vb_path/iso/ubuntu-25.04-desktop-amd64.iso"
+            iso="$vb_path/iso/ubuntu-25.04-live-server-amd64.iso"
             break
             ;;
-        "Fedora")
-            echo -e "Downloading\e[1m\e[34m Fedora 42 ISO\e[0m if needed...
+        "Fedora(UI)")
+            echo -e "Downloading\e[1m\e[34m Fedora Server 43 ISO\e[0m if needed...
             "
-            wget -nc -nv --show-progress --progress=bar -P $vb_path/iso/ https://download.fedoraproject.org/pub/fedora/linux/releases/42/Workstation/x86_64/iso/Fedora-Workstation-Live-42-1.1.x86_64.iso
+            wget -nc -nv --show-progress --progress=bar -P $vb_path/iso/ https://download.fedoraproject.org/pub/fedora/linux/releases/43/Server/x86_64/iso/Fedora-Server-dvd-x86_64-43-1.6.iso
             oschosen="Fedora"
             os_type="Fedora_64"
-            iso="$vb_path/iso/Fedora-Workstation-Live-42-1.1.x86_64.iso"
+            iso="$vb_path/iso/Fedora-Server-dvd-x86_64-43-1.6.iso"
+            break
+            ;;
+        "Rocky10(UI)")
+            echo -e "Downloading\e[1m\e[34m Rocky Linux 10.1 ISO\e[0m if needed...
+            "
+            wget -nc -nv --show-progress --progress=bar -P $vb_path/iso/ https://download.rockylinux.org/pub/rocky/10/isos/x86_64/Rocky-10.1-x86_64-dvd1.iso
+            oschosen="Rocky_10"
+            os_type="RedHat_64"
+            iso=$vb_path/iso/Rocky-10.1-x86_64-dvd1.iso
             break
             ;;
         "ArchLinux")
@@ -43,15 +55,6 @@ do
             oschosen="ArchLinux"
             os_type="ArchLinux_64"
             iso="$vb_path/iso/archlinux-2025.10.01-x86_64.iso"
-            break
-            ;;
-        "Rocky10")
-            echo -e "Downloading\e[1m\e[34m Rocky Linux 10 ISO\e[0m if needed...
-            "
-            wget -nc -nv --show-progress --progress=bar -P $vb_path/iso/ https://download.rockylinux.org/pub/rocky/10/isos/x86_64/Rocky-10.0-x86_64-dvd1.iso
-            oschosen="Rocky_10"
-            os_type="RedHat_64"
-            iso=$vb_path/iso/Rocky-10.0-x86_64-dvd1.iso
             break
             ;;
         "WindowsServer2022")
@@ -115,12 +118,12 @@ echo -e "\e[1m\e[34mCreating the VM with a $hddsize storage allocation. \e[0m
 read -p 'What MAC address should the VM use? (Default auto): ' -e -i 'auto'  mac_addr
 echo -e "\e[1m\e[34mAssigning the VM with $mac_addr MAC address. \e[0m
 "
-################
 
 # Get available network interfaces
 interfaces=($(ip link show | grep -E '^[0-9]+:' | awk -F: '{print $2}' | tr -d ' '))
 
 # Create selection menu
+PS3='Please choose a NIC: '
 echo "Available network interfaces:"
 select interface in "${interfaces[@]}"; do
     if [[ -n "$interface" ]]; then
@@ -135,8 +138,6 @@ done
 echo -e "\e[1m\e[34mYou have chosen to attach $interface as the bridge. \e[0m
 "
 
-################
-
 vm_path="$vb_path/$vmname"
 mkdir -p $vm_path
 
@@ -148,6 +149,7 @@ VBoxManage storageattach "$vmname" --storagectl "SATA Controller" --port 0 --dev
 VBoxManage storageattach "$vmname" --storagectl "SATA Controller" --port 1 --device 0 --type dvddrive --medium "$iso"
 
 
+PS3='Please choose a display mode: (GUI, Seperate, Headless) '
 echo -e "Which display mode would you like to run the VM In? \e[0m
 "
 select dis in "GUI" "Seperate" "Headless";
@@ -172,7 +174,35 @@ do
   esac
 done
 
-VBoxManage startvm "$vmname" --type $dis
+#### Unattended Install
+PS3='Unattended Install? '
+echo -e "Do you want to do an unattended install? (Only available for )"
+select isoyn in "Yes" "No";
+do
+    case $isoyn in 
+        "Yes" )
+            read -p 'What Username would you like set up?: (default Ansible) ' -e -i 'Ansible'  username
+            echo -e "\e[1m\e[34mCreating the user $username. \e[0m
+            "
+            read -s -p "Enter the password to use for $username: " password
+            echo -e "\e[1m\e[34mPassword Set. \e[0m
+            "
+            read -p "Enter the Hostname for the VM: " -e -i $vmname  hostname
+            echo -e "\e[1m\e[34mHostname Set. \e[0m
+            "
+            VBoxManage unattended install "$vmname" --iso="$iso" --user="$username" --full-user-name="$username" --password="$password" --hostname="$hostname.local" --image-index=0 --auxiliary-base-path="$vm_path" --start-vm=$dis --country="$default_country" --time-zone="default_timezone" --locale="$default_locale" --no-install-additions >> /dev/null
+            break
+            ;;
+        "No" )
+            echo -e "No unattended install."
+            VBoxManage startvm "$vmname" --type $dis
+            break
+            ;;
+        *)
+            echo -e "\033[0;31mInvalid Option $REPLY\033[0m"
+            ;;
+    esac
+done
 
 
 #### Closing Statement
